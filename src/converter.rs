@@ -1,4 +1,4 @@
-use osmpbfreader::{Node, NodeId};
+use osmpbfreader::{Node, NodeId, Tags};
 
 use crate::osm_reader::RelationNodes;
 
@@ -7,6 +7,7 @@ pub struct Polygon {
     pub points: Vec<Vec<Point>>,
     pub relation_id: i64,
     pub admin_level: i64,
+    pub tags: Tags,
 }
 
 #[derive(Clone)]
@@ -133,6 +134,7 @@ fn convert_to_poly(rn: RelationNodes) -> Polygon {
         points,
         relation_id,
         admin_level,
+        tags
     }
 }
 

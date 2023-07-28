@@ -16,6 +16,7 @@ fn main() {
     const MAX_ADMIN_LEVEL_ARG: &str = "MAX_ADMIN_LEVEL";
     const OVERWRITE_ARG: &str = "OVERWRITE";
     const SKIP_ARG: &str = "SKIP";
+    const POLYGON_ARG: &str = "POLYGON";
     const GEOJSON_ARG: &str = "GEOJSON";
 
     let matches = App::new("OSM Extract Polygon")
@@ -76,6 +77,15 @@ fn main() {
             .help("set this flag to skip overwriting files; if neither this nor --overwrite is set the user is being prompted should a file be overwritten.")
         )
         .arg(
+            Arg::with_name(POLYGON_ARG)
+            .short("y")
+            .long("poly")
+            .value_name("bool")
+            .takes_value(true)
+            .required(false)
+            .help("set this flag to output polygons (.poly) files")
+        )
+        .arg(
             Arg::with_name(GEOJSON_ARG)
             .short("g")
             .long("geojson")
@@ -119,10 +129,23 @@ fn main() {
         OverwriteConfiguration::Ask
     };
 
+    let poly_output: bool = matches
+    .value_of(POLYGON_ARG)
+    .unwrap_or("true")
+    .parse::<bool>()
+    .unwrap();
+
     let geojson_output = matches.is_present(GEOJSON_ARG);
+
+
+    if !geojson_output && !poly_output{
+        println!("error: Please select one of [poly, geojson] formats!");
+        std::process::exit(-1);
+    }
 
     let output_handler_config = OutputHandlerConfiguration {
         overwrite_configuration,
+        poly_output,
         geojson_output,
     };
 
