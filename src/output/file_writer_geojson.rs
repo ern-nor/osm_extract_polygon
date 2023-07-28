@@ -39,8 +39,14 @@ fn convert_polygon_to_geojson_feature(polygon: &Polygon) -> Result<Feature, ()> 
 
 fn create_properties(polygon: &Polygon) -> Map<String, serde_json::Value> {
     let mut properties = Map::new();
-    properties.insert(String::from("name"), to_value(&polygon.name).unwrap());
-    properties.insert(String::from("admin_level"), to_value(polygon.admin_level).unwrap());
+    properties.insert(String::from("_name"), to_value(&polygon.name).unwrap());
+    properties.insert(String::from("_admin_level"), to_value(polygon.admin_level).unwrap());
+    properties.insert(String::from("_rid"), to_value(polygon.relation_id).unwrap());
+ 
+    for tag in polygon.tags.iter() {
+        properties.insert(tag.0.as_str().to_string(), to_value(tag.1.as_str().to_string()).unwrap());
+    }
+
     properties
 }
 
