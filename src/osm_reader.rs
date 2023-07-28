@@ -14,12 +14,17 @@ pub struct RelationNodes {
     pub nodes: Vec<Vec<Node>>,
 }
 
-pub fn read_osm(filename: &str, min_admin: &i8, max_admin: &i8) -> Vec<RelationNodes> {
+pub fn read_osm(filename: &str, min_admin: &i8, max_admin: &i8, include_ways: bool) -> Vec<RelationNodes> {
     let file_reference = std::fs::File::open(std::path::Path::new(filename)).unwrap();
-    read_ways_and_relation(file_reference, min_admin, max_admin)
+    read_ways_and_relation(file_reference, min_admin, max_admin, include_ways)
 }
 
-fn read_ways_and_relation(file_reference: std::fs::File, min_admin: &i8, max_admin: &i8) -> Vec<RelationNodes> {
+fn read_ways_and_relation(
+    file_reference: std::fs::File,
+    min_admin: &i8,
+    max_admin: &i8,
+    include_ways: bool,
+) -> Vec<RelationNodes> {
     let mut pbf: OsmPbfReaderFile = OsmPbfReader::new(file_reference);
 
     let relation_id_to_relation = find_admin_boundary_relations(&mut pbf, min_admin, max_admin);

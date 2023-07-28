@@ -18,6 +18,7 @@ fn main() {
     const SKIP_ARG: &str = "SKIP";
     const POLYGON_ARG: &str = "POLYGON";
     const GEOJSON_ARG: &str = "GEOJSON";
+    const INCLUDE_WAYS_ARG: &str = "INCLUDE_WAYS";
 
     let matches = App::new("OSM Extract Polygon")
         .version(crate_version!())
@@ -91,6 +92,12 @@ fn main() {
             .long("geojson")
             .takes_value(false)
             .help("set this flag to generate geojson output")
+        ).arg(
+            Arg::with_name(INCLUDE_WAYS_ARG)
+            .short("w")
+            .long("ways")
+            .takes_value(false)
+            .help("set this flag to ways polygon data into output")
         )
         .get_matches();
 
@@ -99,6 +106,7 @@ fn main() {
         .unwrap_or("8")
         .parse::<i8>()
         .unwrap();
+
     let max_admin_level = matches
         .value_of(MAX_ADMIN_LEVEL_ARG)
         .unwrap_or("8")
@@ -129,6 +137,8 @@ fn main() {
         OverwriteConfiguration::Ask
     };
 
+    let include_ways = matches.is_present(INCLUDE_WAYS_ARG);
+
     let poly_output: bool = matches
     .value_of(POLYGON_ARG)
     .unwrap_or("true")
@@ -136,7 +146,6 @@ fn main() {
     .unwrap();
 
     let geojson_output = matches.is_present(GEOJSON_ARG);
-
 
     if !geojson_output && !poly_output{
         println!("error: Please select one of [poly, geojson] formats!");
@@ -155,7 +164,7 @@ fn main() {
     let path = matches.value_of(OUTPUT_FOLDER).unwrap_or(&default_path);
     println!("Output path: {}", path);
 
-    let relations = osm_reader::read_osm(in_filename, &min_admin_level, &max_admin_level);
+    let relations = osm_reader::read_osm(in_filename, &min_admin_level, &max_admin_level, include_ways);
     let polygons = converter::convert(relations);
     let result = output::output_handler::write(path, &polygons, output_handler_config);
 
