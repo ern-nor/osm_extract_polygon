@@ -75,6 +75,7 @@ fn convert_to_linestring(points: &[Point]) -> LineString<f32> {
 mod tests {
     use super::*;
     use geojson::Value;
+    use osmpbfreader::Tags;
     use std::matches;
 
     #[test]
@@ -88,6 +89,7 @@ mod tests {
             points: vec![vec![p1.clone(), p2.clone(), p3.clone()]],
             relation_id: 1,
             admin_level: 1,
+            tags: Tags::new(),
         };
 
         let result = convert_polygon_to_geo_polygons(&single_polygon);
@@ -124,6 +126,7 @@ mod tests {
             ],
             relation_id: 1,
             admin_level: 1,
+            tags: Tags::new(),
         };
 
         let result = convert_polygon_to_geo_polygons(&poly);
@@ -215,6 +218,7 @@ mod tests {
             points: vec![vec![]],
             relation_id: 1,
             admin_level: 1,
+            tags: Tags::new(),
         };
         let result = create_properties(&single_polygon);
 
@@ -230,6 +234,7 @@ mod tests {
             points: vec![vec![]],
             relation_id: 1,
             admin_level: 27,
+            tags: Tags::new(),
         };
         let result = create_properties(&single_polygon);
 

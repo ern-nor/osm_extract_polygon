@@ -16,6 +16,7 @@ pub trait FileWriter {
 
 pub struct OutputHandlerConfiguration {
     pub overwrite_configuration: OverwriteConfiguration,
+    pub poly_output: bool,
     pub geojson_output: bool,
 }
 
@@ -34,7 +35,7 @@ fn new_output_handler(config: OutputHandlerConfiguration) -> OutputHandler {
         file_creator: FileCreator {
             overwrite_mode_config: config.overwrite_configuration,
         },
-        write_poly: true,
+        write_poly: config.poly_output,
         write_geojson: config.geojson_output,
     }
 }
@@ -146,6 +147,8 @@ fn make_safe(name: &str) -> String {
 
 #[cfg(test)]
 mod tests {
+    use osmpbfreader::Tags;
+
     use super::*;
 
     #[test]
@@ -188,6 +191,7 @@ mod tests {
             points: Vec::new(),
             relation_id: 100,
             admin_level: 1,
+            tags: Tags::new(),
         };
 
         let p2 = Polygon {
@@ -195,6 +199,7 @@ mod tests {
             points: Vec::new(),
             relation_id: 200,
             admin_level: 1,
+            tags: Tags::new(),
         };
 
         let p3 = Polygon {
@@ -202,6 +207,8 @@ mod tests {
             points: Vec::new(),
             relation_id: 300,
             admin_level: 1,
+            tags: Tags::new(),
+            
         };
 
         let p4 = Polygon {
@@ -209,6 +216,7 @@ mod tests {
             points: Vec::new(),
             relation_id: 400,
             admin_level: 1,
+            tags: Tags::new(),
         };
 
         let input = [p1, p2, p3, p4];
@@ -233,6 +241,7 @@ mod tests {
             points: Vec::new(),
             relation_id: 1,
             admin_level: 1,
+            tags: Tags::new(),
         };
 
         let p2 = Polygon {
@@ -240,6 +249,7 @@ mod tests {
             points: Vec::new(),
             relation_id: 2,
             admin_level: 1,
+            tags: Tags::new(),
         };
 
         let p3 = Polygon {
@@ -247,6 +257,7 @@ mod tests {
             points: Vec::new(),
             relation_id: 3,
             admin_level: 1,
+            tags: Tags::new(),
         };
 
         let input = [p1, p2, p3];
@@ -270,6 +281,7 @@ mod tests {
             points: Vec::new(),
             relation_id: 123,
             admin_level: 1,
+            tags: Tags::new(),
         };
 
         let p2 = Polygon {
@@ -277,6 +289,7 @@ mod tests {
             points: Vec::new(),
             relation_id: 456,
             admin_level: 1,
+            tags: Tags::new(),
         };
 
         let input = [p1, p2];
