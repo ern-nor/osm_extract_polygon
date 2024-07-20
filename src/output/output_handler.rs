@@ -18,6 +18,7 @@ pub struct OutputHandlerConfiguration {
     pub overwrite_configuration: OverwriteConfiguration,
     pub poly_output: bool,
     pub geojson_output: bool,
+    pub numerical: bool,
 }
 
 pub fn write(folder: &str, polygons: &[Polygon], config: OutputHandlerConfiguration) -> std::io::Result<u64> {
@@ -37,6 +38,7 @@ fn new_output_handler(config: OutputHandlerConfiguration) -> OutputHandler {
         },
         write_poly: config.poly_output,
         write_geojson: config.geojson_output,
+        numerical: config.numerical
     }
 }
 
@@ -44,11 +46,13 @@ struct OutputHandler {
     file_creator: FileCreator,
     write_poly: bool,
     write_geojson: bool,
+    numerical: bool,
 }
 
 impl OutputHandler {
     pub fn write_files(&mut self, base_folder: &str, filename_polys: Vec<(String, &Polygon)>) -> std::io::Result<u64> {
         let mut file_count: u64 = 0;
+        let mut position: u64 = 0;
 
         let poly_writer = PolyWriter {};
         let geojson_writer = GeoJsonWriter {};
@@ -57,7 +61,8 @@ impl OutputHandler {
         println!("writing output files...");
 
         for (name, polygon) in filename_polys {
-            let filename_wo_ext = format!("{}/{}", base_folder, name);
+            let filename_wo_ext = format!("{}/{}", base_folder, if self.numerical { position.to_string() } else { name } );
+
             if self.write_poly {
                 let success_poly = self.write_file(&filename_wo_ext, "poly", polygon, &poly_writer);
                 if success_poly {
@@ -70,6 +75,8 @@ impl OutputHandler {
                     file_count += 1;
                 }
             }
+
+            position += 1;
         }
 
         println!("finished writing! {}s", now.elapsed().as_secs());

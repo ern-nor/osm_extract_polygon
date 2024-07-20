@@ -16,6 +16,7 @@ fn main() {
     const MAX_ADMIN_LEVEL_ARG: &str = "MAX_ADMIN_LEVEL";
     const OVERWRITE_ARG: &str = "OVERWRITE";
     const SKIP_ARG: &str = "SKIP";
+    const NUMERICAL_ARG: &str = "NUMERICAL";
     const POLYGON_ARG: &str = "POLYGON";
     const GEOJSON_ARG: &str = "GEOJSON";
     const INCLUDE_WAYS_ARG: &str = "INCLUDE_WAYS";
@@ -76,6 +77,13 @@ fn main() {
             .long("skip")
             .takes_value(false)
             .help("set this flag to skip overwriting files; if neither this nor --overwrite is set the user is being prompted should a file be overwritten.")
+        )
+        .arg(
+            Arg::with_name(NUMERICAL_ARG)
+            .short("n")
+            .long("numerical")
+            .takes_value(true)
+            .help("set this flag to save files name numericaly, starting with 0,1,2...")
         )
         .arg(
             Arg::with_name(POLYGON_ARG)
@@ -145,6 +153,12 @@ fn main() {
     .parse::<bool>()
     .unwrap();
 
+    let numerical: bool = matches
+    .value_of(NUMERICAL_ARG)
+    .unwrap_or("true")
+    .parse::<bool>()
+    .unwrap();
+
     let geojson_output = matches.is_present(GEOJSON_ARG);
 
     if !geojson_output && !poly_output{
@@ -156,6 +170,7 @@ fn main() {
         overwrite_configuration,
         poly_output,
         geojson_output,
+        numerical: numerical
     };
 
     let in_filename = matches.value_of(INPUT_ARG).unwrap();
